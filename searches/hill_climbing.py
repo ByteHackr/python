@@ -60,7 +60,7 @@ class SearchProblem:
 
     def __hash__(self):
         """
-        hash the string represetation of the current search state.
+        hash the string representation of the current search state.
         """
         return hash(str(self))
 
@@ -150,7 +150,7 @@ def hill_climbing(
             solution_found = True
 
     if visualization:
-        import matplotlib.pyplot as plt
+        from matplotlib import pyplot as plt
 
         plt.plot(range(iterations), scores)
         plt.xlabel("Iterations")

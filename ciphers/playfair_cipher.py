@@ -1,8 +1,9 @@
-import string
 import itertools
+import string
+from typing import Generator, Iterable
 
 
-def chunker(seq, size):
+def chunker(seq: Iterable[str], size: int) -> Generator[tuple[str, ...], None, None]:
     it = iter(seq)
     while True:
         chunk = tuple(itertools.islice(it, size))
@@ -11,7 +12,7 @@ def chunker(seq, size):
         yield chunk
 
 
-def prepare_input(dirty):
+def prepare_input(dirty: str) -> str:
     """
     Prepare the plaintext by up-casing it
     and separating repeated letters with X's
@@ -37,7 +38,7 @@ def prepare_input(dirty):
     return clean
 
 
-def generate_table(key):
+def generate_table(key: str) -> list[str]:
 
     # I and J are used interchangeably to allow
     # us to use a 5x5 table (25 letters)
@@ -59,7 +60,7 @@ def generate_table(key):
     return table
 
 
-def encode(plaintext, key):
+def encode(plaintext: str, key: str) -> str:
     table = generate_table(key)
     plaintext = prepare_input(plaintext)
     ciphertext = ""
@@ -82,7 +83,7 @@ def encode(plaintext, key):
     return ciphertext
 
 
-def decode(ciphertext, key):
+def decode(ciphertext: str, key: str) -> str:
     table = generate_table(key)
     plaintext = ""
 

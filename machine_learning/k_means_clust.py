@@ -1,13 +1,10 @@
 """README, Author - Anurag Kumar(mailto:anuragkumarak95@gmail.com)
-
 Requirements:
   - sklearn
   - numpy
   - matplotlib
-
 Python:
   - 3.5
-
 Inputs:
   - X , a 2D numpy array of features.
   - k , number of clusters to create.
@@ -16,10 +13,8 @@ Inputs:
   - maxiter , maximum number of iterations to process.
   - heterogeneity , empty list that will be filled with hetrogeneity values if passed
     to kmeans func.
-
 Usage:
   1. define 'k' value, 'X' features array and 'hetrogeneity' empty list
-
   2. create initial_centroids,
         initial_centroids = get_initial_centroids(
             X,
@@ -27,9 +22,7 @@ Usage:
             seed=0 # seed value for initial centroid generation,
                    # None for randomness(default=None)
             )
-
   3. find centroids and clusters using kmeans function.
-
         centroids, cluster_assignment = kmeans(
             X,
             k,
@@ -38,25 +31,21 @@ Usage:
             record_heterogeneity=heterogeneity,
             verbose=True # whether to print logs in console or not.(default=False)
             )
-
-
   4. Plot the loss function, hetrogeneity values for every iteration saved in
      hetrogeneity list.
         plot_heterogeneity(
             heterogeneity,
             k
         )
-
   5. Transfers Dataframe into excel format it must have feature called
       'Clust' with k means clustering numbers in it.
-
-
 """
+import warnings
+
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from sklearn.metrics import pairwise_distances
-import warnings
 
 warnings.filterwarnings("ignore")
 
@@ -143,12 +132,12 @@ def kmeans(
     data, k, initial_centroids, maxiter=500, record_heterogeneity=None, verbose=False
 ):
     """This function runs k-means on given data and initial set of centroids.
-       maxiter: maximum number of iterations to run.(default=500)
-       record_heterogeneity: (optional) a list, to store the history of heterogeneity
-                             as function of iterations
-                             if None, do not store the history.
-       verbose: if True, print how many data points changed their cluster labels in
-                             each iteration"""
+    maxiter: maximum number of iterations to run.(default=500)
+    record_heterogeneity: (optional) a list, to store the history of heterogeneity
+                          as function of iterations
+                          if None, do not store the history.
+    verbose: if True, print how many data points changed their cluster labels in
+                          each iteration"""
     centroids = initial_centroids[:]
     prev_cluster_assignment = None
 
@@ -193,7 +182,7 @@ def kmeans(
 
 # Mock test below
 if False:  # change to true to run this test case.
-    import sklearn.datasets as ds
+    from sklearn import datasets as ds
 
     dataset = ds.load_iris()
     k = 3
@@ -211,7 +200,7 @@ if False:  # change to true to run this test case.
 
 
 def ReportGenerator(
-    df: pd.DataFrame, ClusteringVariables: np.array, FillMissingReport=None
+    df: pd.DataFrame, ClusteringVariables: np.ndarray, FillMissingReport=None
 ) -> pd.DataFrame:
     """
     Function generates easy-erading clustering report. It takes 2 arguments as an input:
@@ -221,7 +210,6 @@ def ReportGenerator(
     in order to run the function following libraries must be imported:
         import pandas as pd
         import numpy as np
-
     >>> data = pd.DataFrame()
     >>> data['numbers'] = [1, 2, 3]
     >>> data['col1'] = [0.5, 2.5, 4.5]
@@ -250,7 +238,7 @@ def ReportGenerator(
     df["dummy"] = 1
     numeric_cols = df.select_dtypes(np.number).columns
     report = (
-        df.groupby(["Cluster"])[  # constract report dataframe
+        df.groupby(["Cluster"])[  # construct report dataframe
             numeric_cols
         ]  # group by cluster number
         .agg(
@@ -263,7 +251,7 @@ def ReportGenerator(
                     lambda x: np.mean(
                         np.nan_to_num(
                             sorted(x)[
-                                round((len(x) * 25 / 100)) : round(len(x) * 75 / 100)
+                                round(len(x) * 25 / 100) : round(len(x) * 75 / 100)
                             ]
                         )
                     ),
@@ -286,17 +274,17 @@ def ReportGenerator(
         .T.reset_index()
         .rename(index=str, columns={"level_0": "Features", "level_1": "Type"})
     )  # rename columns
-
+    # calculate the size of cluster(count of clientID's)
     clustersize = report[
         (report["Features"] == "dummy") & (report["Type"] == "count")
-    ]  # caclulating size of cluster(count of clientID's)
+    ].copy()  # avoid SettingWithCopyWarning
     clustersize.Type = (
         "ClusterSize"  # rename created cluster df to match report column names
     )
     clustersize.Features = "# of Customers"
     clusterproportion = pd.DataFrame(
         clustersize.iloc[:, 2:].values
-        / clustersize.iloc[:, 2:].values.sum()  # caclulating proportion of cluster
+        / clustersize.iloc[:, 2:].values.sum()  # calculating the proportion of cluster
     )
     clusterproportion[
         "Type"
